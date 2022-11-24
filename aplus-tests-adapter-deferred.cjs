@@ -1,5 +1,7 @@
+process.on("unhandledRejection", () => {})
+
 require = require("esm")(module, { cache: false })
-const { Promise } = require("./promise.js")
+const { DeferredPromise: Promise } = require("./index.js")
 
 module.exports = {
 	deferred() {

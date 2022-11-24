@@ -61,6 +61,8 @@ retryIfEmpty(() => Math.random() > 0.5 || null, 2).catch((e) => {
 
 **`yarn test-builtin`**: Run A+ test suite against the native built-in `Promise`
 
+**`yarn test-deferred`**: Run deferred tests and A+ test suite against `DeferredPromise`
+
 <br>
 
 ---

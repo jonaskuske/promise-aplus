@@ -42,25 +42,13 @@ export class Promise {
 			}
 		}
 
-		return new Promise((resolve, reject) => {
-			const settle = () => {
-				try {
-					const handler = this.#state === "rejected" ? onRejected : onResolved
-					resolve(handler(this.#value))
-				} catch (reason) {
-					reject(reason)
-				}
-			}
+		const then = () => (this.#state === "rejected" ? onRejected : onResolved)(this.#value)
 
-			// If 'this' promise has already settled, we can start settling the 'next' promise
-			// (returned from .then) right away. Mustn't be called sync, so queue as microtask.
-			if (this.#state !== "pending") return queueMicrotask(settle)
-
-			// Otherwise we register a callback. Once 'this' promise has settled,
-			// it'll run its callbacks so the 'next' promise will start settling too.
-			// We unshift so that the promise can pop its queue in chronological order:
-			this.#queue.unshift(settle)
-		})
+		// If 'this' promise is already done, we resolve the 'next' promise immediately
+		if (this.#state !== "pending") return Promise.resolve({ then })
+		// Otherwise we register a callback. Once 'this' promise is done, its callbacks
+		// run so the 'next' promise will resolve. Unshift so that the queue pops in order.
+		return new Promise((resolve) => this.#queue.unshift(() => resolve({ then })))
 	}
 
 	catch(onRejected) {
