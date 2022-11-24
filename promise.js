@@ -11,7 +11,7 @@ export class Promise {
 	#queue = []
 
 	// Accept an executor function and pass resolve and reject functions
-	// as arguments, which will fullfill or reject the promise when called.
+	// as arguments, which will fulfill or reject the promise when called.
 	// → new Promise((resolve, reject) => {})
 	constructor(executor) {
 		// If executor is invalid, call it outside try/catch to throw TypeError
@@ -21,7 +21,7 @@ export class Promise {
 		let handled = false
 
 		const resolve = (value) => {
-			!handled && (handled = true) && queueMicrotask(() => this.#fullfill(value))
+			!handled && (handled = true) && queueMicrotask(() => this.#fulfill(value))
 		}
 		const reject = (reason) => {
 			!handled && (handled = true) && queueMicrotask(() => this.#reject(reason))
@@ -56,9 +56,9 @@ export class Promise {
 	}
 
 	// Recursively unwrap promises until we reach a non-thenable value.
-	// Fullfill with this value or reject if something in the chain throws/rejects.
+	// Fulfill with this value or reject if something in the chain throws/rejects.
 	// → Promise.resolve(Promise.resolve(1)).then(x => x === 1)
-	#fullfill(next) {
+	#fulfill(next) {
 		if (next === this) {
 			return this.#reject(new TypeError(`Chaining cycle detected for promise: ${next}`))
 		}
@@ -78,18 +78,18 @@ export class Promise {
 		// Settle (change state & set value), then run the queued .then callbacks.
 		if (typeof then !== "function") {
 			this.#value = next
-			this.#state = "fullfilled"
+			this.#state = "fulfilled"
 
 			let callback
 			while ((callback = this.#queue.pop())) callback()
 		} else {
 			// Otherwise, next is a thenable. Unwrap it: add onResolve and onReject callbacks
-			// that recursively call #fullfill, which will then check for the next thenable.
+			// that recursively call #fulfill, which will then check for the next thenable.
 			// This continues until a non-thenable is reached.
 			let handled = false
 
 			const onResolve = (value) => {
-				!handled && (handled = true) && this.#fullfill(value)
+				!handled && (handled = true) && this.#fulfill(value)
 			}
 			const onReject = (reason) => {
 				!handled && (handled = true) && this.#reject(reason)

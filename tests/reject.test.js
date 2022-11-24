@@ -26,6 +26,19 @@ describe("reject", () => {
 		expect.strictEqual(p.rejectionReason, 1)
 	})
 
+	it("can be rejected with a reason", async () => {
+		const promise = new DeferredPromise().catch((reason) => reason)
+		expect.strictEqual(promise.state, "pending")
+
+		const reason = new Error("hello")
+		promise.reject(reason)
+
+		expect.strictEqual(promise.state, "pending")
+		expect.strictEqual(await promise, reason)
+		expect.strictEqual(promise.state, "rejected")
+		expect.strictEqual(promise.rejectionReason, reason)
+	})
+
 	it("rejects with undefined reason if there is an empty catch block", async () => {
 		const promise = new DeferredPromise().catch(() => {
 			// Note how this catch block will lose any rejection reason.
@@ -42,18 +55,5 @@ describe("reject", () => {
 		// But the rejection reason is undefined
 		// because the "catch" block above didn't return any.
 		expect.strictEqual(promise.rejectionReason, undefined)
-	})
-
-	it("can be rejected with a reason", async () => {
-		const promise = new DeferredPromise().catch((reason) => reason)
-		expect.strictEqual(promise.state, "pending")
-
-		const reason = new Error("hello")
-		promise.reject(reason)
-
-		expect.strictEqual(promise.state, "pending")
-		expect.strictEqual(await promise, reason)
-		expect.strictEqual(promise.state, "rejected")
-		expect.strictEqual(promise.rejectionReason, reason)
 	})
 })
