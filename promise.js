@@ -42,7 +42,10 @@ export class Promise {
 			}
 		}
 
-		const then = () => (this.#state === "rejected" ? onRejected : onResolved)(this.#value)
+		// onRejected/onResolved must be called lazily, so wrap in a thenable
+		const then = (resolve) => {
+			resolve((this.#state === "rejected" ? onRejected : onResolved)(this.#value))
+		}
 
 		// If 'this' promise is already done, we resolve the 'next' promise immediately
 		if (this.#state !== "pending") return Promise.resolve({ then })
