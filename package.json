@@ -1,0 +1,57 @@
+{
+	"name": "promise-aplus",
+	"type": "module",
+	"main": "./promise.js",
+	"packageManager": "yarn@3.3.0",
+	"scripts": {
+		"test": "promises-aplus-tests ./test-adapter.cjs --bail",
+		"test-builtin": "promises-aplus-tests ./test-adapter-native.js --bail",
+		"lint": "eslint --ext .js --ext .cjs --ext .mjs ."
+	},
+	"devDependencies": {
+		"@types/esm": "^3.2.0",
+		"@types/node": "^18.11.9",
+		"eslint": "^8.28.0",
+		"eslint-config-prettier": "^8.5.0",
+		"esm": "^3.2.25",
+		"prettier": "^2.8.0",
+		"promises-aplus-tests": "^2.1.2",
+		"typescript": "^4.9.3"
+	},
+	"resolutions": {
+		"esm": "npm:esm-wallaby@^3.2.26"
+	},
+	"prettier": {
+		"useTabs": true,
+		"semi": false,
+		"printWidth": 90,
+		"trailingComma": "all"
+	},
+	"eslintConfig": {
+		"root": true,
+		"extends": [
+			"eslint:recommended",
+			"prettier"
+		],
+		"env": {
+			"es2022": true,
+			"shared-node-browser": true
+		},
+		"parserOptions": {
+			"sourceType": "module"
+		},
+		"overrides": [
+			{
+				"files": [
+					"test-adapter*"
+				],
+				"env": {
+					"node": true
+				},
+				"rules": {
+					"no-global-assign": "off"
+				}
+			}
+		]
+	}
+}
