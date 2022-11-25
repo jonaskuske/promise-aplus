@@ -1,6 +1,6 @@
 import expect from "node:assert"
 import { describe, it } from "node:test"
-import { DeferredPromise } from "../index.js"
+import { DeferredPromise } from "../../index.js"
 
 describe("then", async () => {
 	it("respects promise identity with chain transforms", async () => {

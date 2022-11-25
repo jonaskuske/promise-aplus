@@ -1,6 +1,6 @@
 import expect from "node:assert"
 import { describe, it } from "node:test"
-import { DeferredPromise } from "../index.js"
+import { DeferredPromise } from "../../index.js"
 
 describe("reject", () => {
 	it("can be rejected without any reason", async () => {

@@ -58,6 +58,13 @@ export class Promise {
 		return this.then(undefined, onRejected)
 	}
 
+	finally(onFinally) {
+		return this.then(
+			(value) => Promise.resolve(onFinally?.()).then(() => value),
+			(reason) => Promise.resolve(onFinally?.()).then(() => Promise.reject(reason)),
+		)
+	}
+
 	// Recursively unwrap promises until we reach a non-thenable value.
 	// Fulfill with this value or reject if something in the chain throws/rejects.
 	// → Promise.resolve(Promise.resolve(1)).then(x => x === 1)

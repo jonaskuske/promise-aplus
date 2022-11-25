@@ -4,9 +4,9 @@
 	"main": "./index.js",
 	"packageManager": "yarn@3.3.0",
 	"scripts": {
-		"test": "promises-aplus-tests ./aplus-tests-adapter.cjs --bail",
+		"test": "node --test ./tests/promise && promises-aplus-tests ./aplus-tests-adapter.cjs --bail",
 		"test-builtin": "promises-aplus-tests ./aplus-tests-adapter-native.cjs --bail",
-		"test-deferred": "node --test && run promises-aplus-tests ./aplus-tests-adapter-deferred.cjs --bail",
+		"test-deferred": "node --test ./tests/deferred && promises-aplus-tests ./aplus-tests-adapter-deferred.cjs --bail",
 		"lint": "eslint --ext .js --ext .cjs --ext .mjs ."
 	},
 	"devDependencies": {
