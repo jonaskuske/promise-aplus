@@ -10,6 +10,13 @@ export class Promise {
 	#value = undefined
 	#queue = []
 
+	get state() {
+		return this.#state
+	}
+	get rejectionReason() {
+		return this.#state === "rejected" ? this.#value : undefined
+	}
+
 	// Accept an executor function and pass resolve and reject functions
 	// as arguments, which will fulfill or reject the promise when called.
 	// → new Promise((resolve, reject) => {})
@@ -27,8 +34,11 @@ export class Promise {
 			!handled && (handled = true) && queueMicrotask(() => this.#reject(reason))
 		}
 
+		this.resolve = resolve
+		this.reject = reject
+
 		try {
-			executor(resolve, reject)
+			executor?.(resolve, reject)
 		} catch (reason) {
 			reject(reason)
 		}
@@ -47,11 +57,17 @@ export class Promise {
 			resolve((this.#state === "rejected" ? onRejected : onResolved)(this.#value))
 		}
 
+		let promise
 		// If 'this' promise is already done, we resolve the 'next' promise immediately
-		if (this.#state !== "pending") return Promise.resolve({ then })
+		if (this.#state !== "pending") promise = Promise.resolve({ then })
 		// Otherwise we register a callback. Once 'this' promise is done, its callbacks
 		// run so the 'next' promise will resolve. Unshift so that the queue pops in order.
-		return new Promise((resolve) => this.#queue.unshift(() => resolve({ then })))
+		promise = new Promise((resolve) => this.#queue.unshift(() => resolve({ then })))
+
+		promise.resolve = this.resolve
+		promise.reject = this.reject
+
+		return promise
 	}
 
 	catch(onRejected) {
